@@ -2,11 +2,17 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.0.3]
+
+### Fixed
+- 🐛 Fixed a `Directionality` error in the diagnostic overlay that occurred when the overlay was built without an ancestor providing text direction.
+- 🧭 Improved overlay compatibility with Flutter applications using `MaterialApp` and inherited widget configurations.
+
 ## [0.0.2]
 
 ### Added
 - 📚 Expanded the README with detailed installation and usage instructions.
-- 🎛️ Documented all diagnostic visibility modes: `debug`, `profile`, `release`, `debugAndRelease`, and `all`.
+- 🎚️ Documented all diagnostic visibility modes: `debug`, `profile`, `release`, `debugAndRelease`, and `all`.
 - ⚙️ Added explanations for configuration options and diagnostic session management.
 - 🌐 Improved documentation for HTTP network instrumentation.
 - 📄 Expanded PDF reporting and platform support documentation.

@@ -7,7 +7,6 @@ Future<void> main() async {
       config: DiagnosticConfig(visibility: DiagnosticVisibility.debug));
   runApp(
       DeviceDiagnostics.observability(
-
       child: const ExampleApp()));
 }
 
