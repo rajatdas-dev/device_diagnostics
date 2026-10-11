@@ -5,7 +5,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DeviceDiagnostics.initialize(
       config: DiagnosticConfig(visibility: DiagnosticVisibility.debug));
-  runApp(DeviceDiagnostics.observability(child: const ExampleApp()));
+  runApp(
+      DeviceDiagnostics.observability(
+
+      child: const ExampleApp()));
 }
 
 class ExampleApp extends StatelessWidget {
