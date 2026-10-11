@@ -6,7 +6,6 @@ version: 0.0.1
 homepage: https://github.com/rajatdas-dev/device_diagnostics.git
 repository: https://github.com/rajatdas-dev/device_diagnostics.git
 issue_tracker: https://github.com/rajatdas-dev/device_diagnostics.git/issues
-documentation: https://github.com/rajatdas-dev/device_diagnostics.git#readme
 
 topics:
   - diagnostics

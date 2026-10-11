@@ -1,27 +1,34 @@
-# device_diagnostics
+# 🔍 device_diagnostics
 
-**Session-based diagnostics and performance monitoring for Flutter applications.**
+**A Flutter package for opt-in device diagnostics, performance monitoring, network instrumentation, and PDF diagnostic reports.** 📊
 
-`device_diagnostics` helps Flutter developers inspect application performance, monitor instrumented network requests, track route visits, and export diagnostic reports as PDFs.
+[![pub package](https://img.shields.io/pub/v/device_diagnostics.svg)](https://pub.dev/packages/device_diagnostics)
+[![likes](https://img.shields.io/pub/likes/device_diagnostics)](https://pub.dev/packages/device_diagnostics)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/rajatdas-dev/device_diagnostics)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Created and maintained by **Rajat Das**.
+Monitor your Flutter application's performance, track network activity, inspect device metrics, and generate diagnostic reports — all through a single package. 🚀
 
-## Features
+---
 
-- 📊 **Diagnostic sessions** — collect metrics while a session is running.
-- 🎛️ **Floating diagnostic overlay** — start and stop collection from an in-app panel.
-- ⚡ **Frame performance monitoring** — collect Flutter frame timing information.
-- 🌐 **HTTP instrumentation** — record requests made through `DiagnosticHttpClient`.
-- 🧭 **Route tracking** — integrate navigation observation into diagnostic sessions.
-- 📱 **Native platform metrics** — collect supported device and operating-system information.
-- 📄 **PDF reports** — generate local diagnostic reports and optionally open the platform share sheet.
-- ⚙️ **Configurable behavior** — configure overlay visibility and sampling behavior.
+## ✨ Features
 
-Metric availability depends on the platform and the underlying native implementation. See [Collected metrics and limitations](#collected-metrics-and-limitations) before relying on individual metrics.
+- 📱 **Device information** — model, manufacturer, operating system, and architecture where available.
+- ⚡ **CPU monitoring** — process CPU usage estimates where supported.
+- 🧠 **Memory monitoring** — track application memory usage.
+- 🌡️ **Thermal monitoring** — inspect device thermal state where supported.
+- 🌐 **Network instrumentation** — track HTTP request and response body bytes through the provided client.
+- 🎬 **Frame monitoring** — observe frame performance and estimate dropped frames.
+- 🧭 **Route tracking** — associate diagnostic activity with application screens.
+- 📄 **PDF reports** — export diagnostic sessions for inspection and sharing.
+- 🎛️ **Flexible visibility configuration** — choose Debug, Profile, Release, Debug + Release, or All modes.
+- 🔒 **Opt-in monitoring** — configure diagnostics according to your application's requirements.
 
-## Installation
+> 💡 Metric availability varies by platform. CPU usage, network traffic, thermal state, and device details may be estimates, unavailable, or platform-dependent.
 
-Add the dependency to your application's `pubspec.yaml`:
+## 📦 Installation
+
+Add the dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
@@ -34,25 +41,21 @@ Then run:
 flutter pub get
 ```
 
-Import the package:
+> 🚨 If you are installing a newer published version, replace `0.0.1` with the version listed on [pub.dev](https://pub.dev/packages/device_diagnostics).
+
+## 🚀 Quick Start
+
+Initialize diagnostics before calling `runApp()`:
 
 ```dart
-import 'package:device_diagnostics/device_diagnostics.dart';
-```
-
-## Quick start
-
-Initialize the package before starting your application:
-
-```dart
-import 'package:device_diagnostics/device_diagnostics.dart';
 import 'package:flutter/material.dart';
+import 'package:device_diagnostics/device_diagnostics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await DeviceDiagnostics.initialize(
-    config: DiagnosticConfig(
+    config: const DiagnosticConfig(
       visibility: DiagnosticVisibility.debug,
     ),
   );
@@ -70,19 +73,110 @@ Future<void> main() async {
 }
 ```
 
-Replace `MyHomePage` with your application's home page.
+### 🧩 What's happening here?
 
-The visibility setting controls when the diagnostic overlay is visible:
+1. ⚙️ `DeviceDiagnostics.initialize()` initializes the package configuration.
+2. 🎛️ `DiagnosticConfig` controls which build modes can display diagnostics and which metrics are enabled.
+3. 🧭 `routeObserver` tracks navigation events.
+4. 🖥️ `DeviceDiagnostics.observability()` wraps your app with the diagnostic UI when enabled for the current build mode.
 
-- `DiagnosticVisibility.debug` — show it in debug mode.
-- `DiagnosticVisibility.release` — show it in release mode.
-- `DiagnosticVisibility.debugAndRelease` — show it in both modes.
+## 🎛️ Visibility Modes Explained
 
-These options control overlay visibility, not Flutter's compilation mode. Check your installed package version and public API if the configuration options differ in your implementation.
+Choose when the diagnostic interface should be visible.
 
-## Instrument HTTP requests
+| Mode | 🐛 Debug | 🔬 Profile | 🚀 Release |
+|---|---|---|---|
+| `debug` | ✅ Visible | ❌ Hidden | ❌ Hidden |
+| `profile` | ❌ Hidden | ✅ Visible | ❌ Hidden |
+| `release` | ❌ Hidden | ❌ Hidden | ✅ Visible |
+| `debugAndRelease` | ✅ Visible | ❌ Hidden | ✅ Visible |
+| `all` | ✅ Visible | ✅ Visible | ✅ Visible |
 
-Use `DiagnosticHttpClient` for the HTTP traffic you want the package to record:
+### 🐛 `DiagnosticVisibility.debug`
+
+Best for everyday development and debugging.
+
+```dart
+const DiagnosticConfig(
+  visibility: DiagnosticVisibility.debug,
+)
+```
+
+### 🔬 `DiagnosticVisibility.profile`
+
+Use this mode when profiling performance without enabling the diagnostic UI in ordinary Debug or Release builds.
+
+```dart
+const DiagnosticConfig(
+  visibility: DiagnosticVisibility.profile,
+)
+```
+
+### 🚀 `DiagnosticVisibility.release`
+
+Enables diagnostic visibility in Release builds. Use it only when you intentionally want diagnostics available in production.
+
+```dart
+const DiagnosticConfig(
+  visibility: DiagnosticVisibility.release,
+)
+```
+
+### 🔄 `DiagnosticVisibility.debugAndRelease`
+
+Enables diagnostic visibility in Debug and Release builds while hiding it in Profile builds.
+
+```dart
+const DiagnosticConfig(
+  visibility: DiagnosticVisibility.debugAndRelease,
+)
+```
+
+### 🌍 `DiagnosticVisibility.all`
+
+Enables diagnostic visibility in all three build modes.
+
+```dart
+const DiagnosticConfig(
+  visibility: DiagnosticVisibility.all,
+)
+```
+
+> ⚠️ **Important:** Visibility configuration controls the diagnostic UI's build-mode visibility. It should not be treated as a security boundary or a substitute for access control, privacy safeguards, or production monitoring policies.
+
+## ⚙️ Configuration Reference
+
+Configure monitoring according to your application's needs.
+
+```dart
+const DiagnosticConfig(
+  visibility: DiagnosticVisibility.debug,
+  sampleInterval: Duration(seconds: 1),
+  enableThermalMonitoring: true,
+  enableCpuMonitoring: true,
+  enableMemoryMonitoring: true,
+  enableNetworkMonitoring: true,
+  enableFrameMonitoring: true,
+  showFloatingButtonWhenIdle: true,
+)
+```
+
+| Option | Description |
+|---|---|
+| 🎛️ `visibility` | Selects the build modes in which the diagnostic UI is visible. |
+| ⏱️ `sampleInterval` | Controls how frequently diagnostic metrics are sampled. |
+| 🌡️ `enableThermalMonitoring` | Enables thermal-state monitoring where supported. |
+| ⚡ `enableCpuMonitoring` | Enables process CPU usage sampling where supported. |
+| 🧠 `enableMemoryMonitoring` | Enables memory usage sampling. |
+| 🌐 `enableNetworkMonitoring` | Controls network diagnostics when supported by the implementation. |
+| 🎬 `enableFrameMonitoring` | Enables frame performance monitoring. |
+| 🖲️ `showFloatingButtonWhenIdle` | Controls whether the floating diagnostic button is shown while a session is idle. |
+
+> 💡 The configured sampling interval must be at least **250 milliseconds** if your configuration validation enforces that minimum.
+
+## 🌐 HTTP Network Instrumentation
+
+Use `DiagnosticHttpClient` to record HTTP body-byte metrics for requests made through the diagnostic client.
 
 ```dart
 final client = DiagnosticHttpClient();
@@ -92,160 +186,180 @@ try {
     Uri.parse('https://example.com/api'),
   );
 
-  // Process the response in your application.
+  debugPrint('Status code: ${response.statusCode}');
 } finally {
   client.close();
 }
 ```
 
-**Instrumentation boundary:** requests are only counted when they pass through `DiagnosticHttpClient`. Other HTTP clients, WebViews, native libraries, and unrelated application traffic are not automatically intercepted.
+### 📡 What can it track?
 
-Route attribution is based on the package's current instrumentation behavior and may be approximate when requests overlap or navigation changes.
+- 📤 Outgoing request body bytes.
+- 📥 Incoming response body bytes.
+- 🧭 Network activity associated with diagnostic routes, subject to the implementation's attribution behavior.
 
-## Diagnostic sessions and PDF reports
+> ⚠️ These measurements are not necessarily total network usage. They may exclude headers, TLS overhead, retransmissions, and traffic sent through other HTTP clients or networking APIs.
 
-The floating diagnostic panel lets you start and stop collection.
+## 📊 Diagnostic Sessions
 
-When collection stops, the package generates a PDF report in the application's documents directory under `device_diagnostics/`. Sharing is enabled by default in the documented flow.
-
-To save the report without opening the share sheet, use the controller's supported export method:
+Start a diagnostic session using the controller:
 
 ```dart
-await controller.stopAndExportPdf(share: false);
+final controller = DeviceDiagnostics.controller;
+
+await controller.start();
 ```
 
-Obtain `controller` from the public controller API available in your installed version. Avoid creating a second controller if the package uses a shared controller instance.
+When you have finished collecting diagnostics, export the session report:
 
-## Collected metrics and limitations
+```dart
+await controller.stopAndExportPdf(
+  share: false,
+);
+```
 
-| Metric | Android | iOS |
+### 🔁 Typical workflow
+
+1. ▶️ Start a diagnostic session.
+2. 📈 Reproduce the performance issue or user-reported bug.
+3. 🧭 Navigate through the relevant screens.
+4. ⏹️ Stop the session and generate the report.
+5. 📄 Inspect or share the PDF, depending on your configuration.
+
+## 📄 PDF Diagnostic Reports
+
+Generate a report to help investigate performance issues and reproduce bugs.
+
+Depending on the data collected and platform support, reports can include:
+
+- 📱 Device and operating-system information.
+- ⚡ CPU and 🧠 memory measurements.
+- 🎬 Frame-performance observations.
+- 🌐 Recorded network byte metrics.
+- 🧭 Screen visits and session timing.
+- 📋 Diagnostic samples and summary information.
+
+> 📝 Reports contain diagnostic data from the recorded session. Review the contents before sharing them, especially if they may reveal information about your application or its usage.
+
+## 🧭 Route Tracking
+
+Add the package's route observer to your `MaterialApp`:
+
+```dart
+MaterialApp(
+  navigatorObservers: [
+    DeviceDiagnostics.routeObserver,
+  ],
+  home: const MyHomePage(),
+);
+```
+
+This allows the package to observe supported navigation events and associate diagnostic activity with routes.
+
+> 💡 For the clearest route names, use named routes where appropriate. Route attribution may depend on how navigation is implemented.
+
+## 📱 Platform Support
+
+Platform support depends on the metric and the underlying operating-system APIs.
+
+| Metric | 🤖 Android | 🍎 iOS |
 |---|---|---|
-| App/process memory | PSS estimate | Resident memory estimate |
-| CPU | `/proc/self/stat`-based estimate | Not implemented |
-| Frame timing | Flutter frame timing callbacks | Flutter frame timing callbacks |
-| Network type | Active transport | `NWPathMonitor` |
-| System network byte counters | UID counters, subject to platform limitations | Unavailable |
-| Instrumented HTTP bytes | Requests through `DiagnosticHttpClient` | Requests through `DiagnosticHttpClient` |
-| Thermal state | Android 10+ status | iOS 11+ state |
-| Device and OS information | Android build properties | Machine identifier and iOS version |
-| SoC model | Supported Android versions | Unavailable |
-| Hardware decoder status | Unavailable | Unavailable |
+| Device information | ✅ Supported fields | ✅ Supported fields |
+| Memory usage | ✅ Where available | ✅ Where available |
+| Process CPU estimate | ✅ Where available | ✅ Where available |
+| Network type | ✅ Where available | ✅ Where available |
+| Network byte counters | ✅ Where available | ⚠️ May be unavailable |
+| Thermal state | ✅ On supported Android versions | ✅ On supported iOS versions |
+| Frame monitoring | 📊 Flutter-side monitoring | 📊 Flutter-side monitoring |
+| PDF report generation | 📄 Subject to package/platform support | 📄 Subject to package/platform support |
 
-These metrics are not equivalent to unrestricted device-wide monitoring.
+**Legend:** ✅ Available where implemented · ⚠️ Limited or unavailable · 📊 Collected by Flutter-side instrumentation
 
-- Missing metrics should be treated as **unavailable**, not as zero.
-- Android traffic counters may be cumulative since boot and may include other components sharing the application's UID.
-- System network counters are not route-specific.
-- The Android thermal metric is a coarse thermal state, not a direct temperature reading.
-- Ordinary iOS applications cannot access general process CPU usage or device-wide network byte totals through this plugin.
-- Validate CPU calculations, metric accuracy, and sampling overhead on physical devices before using the results for production decisions.
+## 🏗️ Architecture Overview
 
-## Performance considerations
+The package is organized into layers:
 
-The package is designed to start collection when a diagnostic session begins rather than continuously collecting metrics.
+- 🎛️ **Configuration** — controls visibility and metric options.
+- 🧠 **Diagnostic controller** — manages session state, sampling, and collected data.
+- 📱 **Native integrations** — retrieve platform-specific metrics through a method channel.
+- 🌐 **Network instrumentation** — records HTTP traffic passing through the provided client.
+- 🧭 **Route observer** — tracks supported navigation events.
+- 🖥️ **Diagnostic overlay** — displays diagnostic controls and information.
+- 📄 **Report generator** — produces PDF diagnostic reports.
 
-- The documented default sampling interval is one second.
-- The minimum documented interval is 250 milliseconds.
-- PDF generation occurs after recording stops.
+## 🔒 Privacy and Performance Considerations
 
-Sampling consumes resources. Measure CPU, memory, battery, and frame performance overhead on representative devices before enabling continuous or production diagnostics.
+- 🔐 Enable diagnostics intentionally, especially in Release builds.
+- 📋 Review diagnostic reports before sharing them.
+- 🌐 Remember that only traffic passing through the instrumented client can be counted by that client.
+- ⚙️ Choose a sampling interval suitable for your workload.
+- 🧪 Validate performance and metric behavior on real devices.
+- 🛡️ Do not use UI visibility settings as access control for sensitive diagnostic information.
 
-## Permissions and privacy
+## 🛠️ Troubleshooting
 
-On Android, the plugin requests `ACCESS_NETWORK_STATE` to inspect the active network transport. This does not require a runtime permission prompt.
+### ❓ The diagnostic overlay is not visible
 
-Diagnostic reports may include device information, performance measurements, route activity, and network metadata. Before shipping diagnostics to end users:
+- ✅ Verify that the selected `DiagnosticVisibility` matches the current build mode.
+- ⚙️ Initialize the package before `runApp()`.
+- 🧩 Ensure your app is wrapped using `DeviceDiagnostics.observability()`.
+- 🔎 Confirm that the idle floating button setting matches your expectations.
 
-- Obtain appropriate user consent.
-- Avoid logging credentials, request bodies, sensitive identifiers, or full URLs containing personal information.
-- Explain what is collected and why.
-- Define report retention, sharing, and deletion behavior.
-- Review platform permissions and privacy requirements for your app.
+### ❓ Some metrics are missing
 
-Do not assume that diagnostic reports are safe to share publicly.
+- 📱 Support varies by platform and operating-system version.
+- 🔐 Some native APIs require permissions or return unavailable values.
+- 🌐 iOS network byte counters may not be available through the current implementation.
+- 🧪 Test on a physical device when emulator results are incomplete.
 
-## Example application
+### ❓ No network activity is recorded
 
-The repository includes an example application for exploring the package.
+- 🌐 Make requests through `DiagnosticHttpClient`.
+- 🔎 Confirm that network monitoring is enabled.
+- ⚠️ Traffic from unrelated clients and networking APIs may not be captured.
 
-From the repository root:
+## 🧑‍💻 Development
+
+Run the project's checks before submitting changes:
 
 ```bash
 flutter pub get
 flutter analyze
 flutter test
-
-cd example
-flutter pub get
-flutter run
+flutter pub publish --dry-run
 ```
 
-Run the example on physical Android and iOS devices to validate native metrics that are unavailable or incomplete in simulators.
+## 🗺️ Roadmap
 
-## Architecture
+Potential future improvements include:
 
-The package separates diagnostic collection from the application's feature code:
+- 📈 More diagnostic visualizations.
+- 🧪 Expanded automated tests.
+- 📱 Broader platform-specific metric support.
+- 📄 Additional report customization.
+- 🔍 More detailed performance insights.
 
-```text
-Flutter Application
-       |
-       +-- Diagnostic initialization
-       |
-       +-- Route observer
-       |
-       +-- DiagnosticHttpClient
-       |
-       v
-Diagnostic Session
-       |
-       +-- Frame timing
-       +-- Supported native metrics
-       +-- Instrumented HTTP activity
-       +-- Route activity
-       |
-       v
-Diagnostic Report
-       |
-       +-- Local PDF
-       +-- Optional platform sharing
-```
+## 🤝 Contributing
 
-Only explicitly integrated components are instrumented. The package does not provide unrestricted inspection of all application or device activity.
+Contributions, bug reports, and feature suggestions are welcome!
 
-## Development
+1. 🍴 Fork the repository.
+2. 🌿 Create a feature branch.
+3. 🛠️ Implement and test your changes.
+4. 📬 Submit a pull request with a clear description.
 
-Contributions and bug reports are welcome.
+## 📬 Support
 
-```bash
-flutter pub get
-dart format --output=none --set-exit-if-changed lib test example
-flutter analyze
-flutter test
-```
+Found a bug or have a feature request?
 
-Native changes should also be validated with Android and iOS builds where applicable.
+- 🐛 [Report an issue](https://github.com/rajatdas-dev/device_diagnostics/issues)
+- 💻 [View the GitHub repository](https://github.com/rajatdas-dev/device_diagnostics)
+- 📦 [View the package on pub.dev](https://pub.dev/packages/device_diagnostics)
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and [SECURITY.md](SECURITY.md) for reporting security issues.
+## 📜 License
 
-## Roadmap
+This package is distributed under the [MIT License](LICENSE).
 
-- Improve Android CPU normalization and validation.
-- Improve route attribution for overlapping HTTP requests.
-- Add validated real-device integration tests.
-- Evaluate additional report visualization and export options.
-- Investigate supported approaches to additional platform metrics.
+---
 
-Roadmap items are planned work, not promises that the functionality is already available.
-
-## Author
-
-**Rajat Das**  
-Flutter Developer | Mobile Application Developer
-
-- GitHub: [rajatdas-dev](https://github.com/rajatdas-dev)
-- Repository: [device_diagnostics](https://github.com/rajatdas-dev/device_diagnostics)
-- Issues: [Report a bug or request a feature](https://github.com/rajatdas-dev/device_diagnostics/issues)
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Made with ❤️ and Flutter by **Rajat Das**.
