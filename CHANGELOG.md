@@ -2,7 +2,7 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
-## [Unreleased]
+## [0.0.6]
 
 ### Fixed
 - 🐛 Fixed the `No Overlay widget found` error when the diagnostic overlay is displayed outside the application's `MaterialApp` overlay hierarchy.
