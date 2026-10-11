@@ -87,18 +87,21 @@ class _DiagnosticObservabilityState
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Stack(
-          alignment: AlignmentDirectional.topStart,
-          fit: StackFit.expand,
-          children: <Widget>[
-            widget.child,
-            DiagnosticOverlay(
-              bounds: Size(
-                constraints.maxWidth,
-                constraints.maxHeight,
+        return Directionality(
+          textDirection: textDirection,
+          child: Stack(
+            alignment: Alignment.topLeft,
+            fit: StackFit.expand,
+            children: <Widget>[
+              widget.child,
+              DiagnosticOverlay(
+                bounds: Size(
+                  constraints.maxWidth,
+                  constraints.maxHeight,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
