@@ -15,5 +15,8 @@ Thumbs.db
 # GitHub repository automation
 .github/
 
+# Exclude internal documentation from pub.dev
+lib/src/docs/
+
 # Local package lockfile
 pubspec.lock

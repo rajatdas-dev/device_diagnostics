@@ -1,12 +1,48 @@
 # device_diagnostics
 
-A session-based Flutter diagnostics package with a draggable overlay, app-level HTTP instrumentation, route timing, native platform metrics, and local PDF reports.
+**Session-based diagnostics and performance monitoring for Flutter applications.**
 
-## Status
+`device_diagnostics` helps Flutter developers inspect application performance, monitor instrumented network requests, track route visits, and export diagnostic reports as PDFs.
 
-This is an initial implementation scaffold. Run `flutter analyze`, `flutter test`, and build on real Android and iOS devices before production use. Native metrics are platform-dependent and may be unavailable. Do not interpret missing metrics as zero.
+Created and maintained by **Rajat Das**.
+
+## Features
+
+- 📊 **Diagnostic sessions** — collect metrics while a session is running.
+- 🎛️ **Floating diagnostic overlay** — start and stop collection from an in-app panel.
+- ⚡ **Frame performance monitoring** — collect Flutter frame timing information.
+- 🌐 **HTTP instrumentation** — record requests made through `DiagnosticHttpClient`.
+- 🧭 **Route tracking** — integrate navigation observation into diagnostic sessions.
+- 📱 **Native platform metrics** — collect supported device and operating-system information.
+- 📄 **PDF reports** — generate local diagnostic reports and optionally open the platform share sheet.
+- ⚙️ **Configurable behavior** — configure overlay visibility and sampling behavior.
+
+Metric availability depends on the platform and the underlying native implementation. See [Collected metrics and limitations](#collected-metrics-and-limitations) before relying on individual metrics.
+
+## Installation
+
+Add the dependency to your application's `pubspec.yaml`:
+
+```yaml
+dependencies:
+  device_diagnostics: ^0.0.1
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+Import the package:
+
+```dart
+import 'package:device_diagnostics/device_diagnostics.dart';
+```
 
 ## Quick start
+
+Initialize the package before starting your application:
 
 ```dart
 import 'package:device_diagnostics/device_diagnostics.dart';
@@ -14,81 +50,202 @@ import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await DeviceDiagnostics.initialize(
-    config: const DiagnosticConfig(visibility: DiagnosticVisibility.debug),
-  );
-  runApp(DeviceDiagnostics.observability(
-    child: MaterialApp(
-      navigatorObservers: [DeviceDiagnostics.routeObserver],
-      home: const MyHomePage(),
+    config: DiagnosticConfig(
+      visibility: DiagnosticVisibility.debug,
     ),
-  ));
+  );
+
+  runApp(
+    DeviceDiagnostics.observability(
+      child: MaterialApp(
+        navigatorObservers: [
+          DeviceDiagnostics.routeObserver,
+        ],
+        home: const MyHomePage(),
+      ),
+    ),
+  );
 }
 ```
 
-Visibility values: `debug` (default), `release`, `both`. These control overlay visibility, not Flutter's compilation mode. Avoid enabling production diagnostics without user consent and a privacy review.
+Replace `MyHomePage` with your application's home page.
 
-## Instrument HTTP traffic
+The visibility setting controls when the diagnostic overlay is visible:
 
-Only requests made through this client are counted:
+- `DiagnosticVisibility.debug` — show it in debug mode.
+- `DiagnosticVisibility.release` — show it in release mode.
+- `DiagnosticVisibility.debugAndRelease` — show it in both modes.
+
+These options control overlay visibility, not Flutter's compilation mode. Check your installed package version and public API if the configuration options differ in your implementation.
+
+## Instrument HTTP requests
+
+Use `DiagnosticHttpClient` for the HTTP traffic you want the package to record:
 
 ```dart
 final client = DiagnosticHttpClient();
-final response = await client.get(Uri.parse('https://example.com/api'));
-client.close();
+
+try {
+  final response = await client.get(
+    Uri.parse('https://example.com/api'),
+  );
+
+  // Process the response in your application.
+} finally {
+  client.close();
+}
 ```
 
-Use your own app's supported HTTP integration patterns; other clients, native libraries, WebViews, and unrelated apps are not automatically counted. The current route is used for attribution when the request body is consumed.
+**Instrumentation boundary:** requests are only counted when they pass through `DiagnosticHttpClient`. Other HTTP clients, WebViews, native libraries, and unrelated application traffic are not automatically intercepted.
 
-## Start/stop
+Route attribution is based on the package's current instrumentation behavior and may be approximate when requests overlap or navigation changes.
 
-The floating panel starts collection when Start is pressed. Stop ends sampling and writes a PDF under the app documents directory at `device_diagnostics/`. The report is saved under the app documents directory and the platform share sheet is opened by default. Call `stopAndExportPdf(share: false)` through the controller if you only want to save locally.
+## Diagnostic sessions and PDF reports
+
+The floating diagnostic panel lets you start and stop collection.
+
+When collection stops, the package generates a PDF report in the application's documents directory under `device_diagnostics/`. Sharing is enabled by default in the documented flow.
+
+To save the report without opening the share sheet, use the controller's supported export method:
+
+```dart
+await controller.stopAndExportPdf(share: false);
+```
+
+Obtain `controller` from the public controller API available in your installed version. Avoid creating a second controller if the package uses a shared controller instance.
 
 ## Collected metrics and limitations
 
 | Metric | Android | iOS |
 |---|---|---|
-| App/process memory | PSS estimate from `Debug.getPss()` | Resident memory via `task_info` |
-| CPU | `/proc/self/stat` estimate; tick frequency assumption should be validated per target | Not implemented; reported unavailable |
-| FPS/frame timing | Flutter frame timing callback | Flutter frame timing callback |
+| App/process memory | PSS estimate | Resident memory estimate |
+| CPU | `/proc/self/stat`-based estimate | Not implemented |
+| Frame timing | Flutter frame timing callbacks | Flutter frame timing callbacks |
 | Network type | Active transport | `NWPathMonitor` |
-| System byte counters | UID counters, cumulative since boot; deltas can include other app components sharing UID | Not exposed by this plugin; unavailable |
-| Instrumented HTTP bytes | Requests through `DiagnosticHttpClient` | Same |
-| Thermal | Android 10+ thermal status | iOS 11+ thermal state |
-| Model/OS | Android build properties | Machine identifier and iOS version |
-| SoC | `Build.SOC_MODEL` on Android 12+ | Not exposed; unavailable |
-| Hardware decoder | Not a device-wide property; unavailable | Not exposed; unavailable |
+| System network byte counters | UID counters, subject to platform limitations | Unavailable |
+| Instrumented HTTP bytes | Requests through `DiagnosticHttpClient` | Requests through `DiagnosticHttpClient` |
+| Thermal state | Android 10+ status | iOS 11+ state |
+| Device and OS information | Android build properties | Machine identifier and iOS version |
+| SoC model | Supported Android versions | Unavailable |
+| Hardware decoder status | Unavailable | Unavailable |
 
-Android traffic counters may be unsupported or cumulative since boot. The current sample uses deltas between samples; the first delta is intentionally unavailable. System counters are not per-route. Per-route attribution is currently available for instrumented HTTP traffic only, and precise attribution around overlapping requests is approximate because it uses the active route at completion.
+These metrics are not equivalent to unrestricted device-wide monitoring.
 
-The package cannot inspect all background apps or arbitrary device activity. Android thermal status is a coarse state, not a temperature measurement. iOS does not expose general process CPU usage or device-wide network byte totals to ordinary apps.
+- Missing metrics should be treated as **unavailable**, not as zero.
+- Android traffic counters may be cumulative since boot and may include other components sharing the application's UID.
+- System network counters are not route-specific.
+- The Android thermal metric is a coarse thermal state, not a direct temperature reading.
+- Ordinary iOS applications cannot access general process CPU usage or device-wide network byte totals through this plugin.
+- Validate CPU calculations, metric accuracy, and sampling overhead on physical devices before using the results for production decisions.
 
-## Performance design
+## Performance considerations
 
-- Collectors are started only when a session starts.
-- Default sampling interval is one second (minimum 250 ms).
-- The overlay updates from one controller and does not rebuild the host app's widget subtree intentionally.
-- The PDF is generated after recording stops.
+The package is designed to start collection when a diagnostic session begins rather than continuously collecting metrics.
 
-Sampling itself has overhead. Validate battery, CPU and memory overhead on low-end devices before production use.
+- The documented default sampling interval is one second.
+- The minimum documented interval is 250 milliseconds.
+- PDF generation occurs after recording stops.
+
+Sampling consumes resources. Measure CPU, memory, battery, and frame performance overhead on representative devices before enabling continuous or production diagnostics.
 
 ## Permissions and privacy
 
-Android requests `ACCESS_NETWORK_STATE`; no runtime permission is required for active transport. Do not log credentials, request bodies, full URLs containing identifiers, or personal data. Diagnostic reports may contain device and usage metadata; obtain consent and provide a deletion/sharing policy if shipping to end users.
+On Android, the plugin requests `ACCESS_NETWORK_STATE` to inspect the active network transport. This does not require a runtime permission prompt.
 
-## Development
+Diagnostic reports may include device information, performance measurements, route activity, and network metadata. Before shipping diagnostics to end users:
 
-```sh
+- Obtain appropriate user consent.
+- Avoid logging credentials, request bodies, sensitive identifiers, or full URLs containing personal information.
+- Explain what is collected and why.
+- Define report retention, sharing, and deletion behavior.
+- Review platform permissions and privacy requirements for your app.
+
+Do not assume that diagnostic reports are safe to share publicly.
+
+## Example application
+
+The repository includes an example application for exploring the package.
+
+From the repository root:
+
+```bash
 flutter pub get
 flutter analyze
 flutter test
-cd example && flutter pub get && flutter run
+
+cd example
+flutter pub get
+flutter run
 ```
+
+Run the example on physical Android and iOS devices to validate native metrics that are unavailable or incomplete in simulators.
+
+## Architecture
+
+The package separates diagnostic collection from the application's feature code:
+
+```text
+Flutter Application
+       |
+       +-- Diagnostic initialization
+       |
+       +-- Route observer
+       |
+       +-- DiagnosticHttpClient
+       |
+       v
+Diagnostic Session
+       |
+       +-- Frame timing
+       +-- Supported native metrics
+       +-- Instrumented HTTP activity
+       +-- Route activity
+       |
+       v
+Diagnostic Report
+       |
+       +-- Local PDF
+       +-- Optional platform sharing
+```
+
+Only explicitly integrated components are instrumented. The package does not provide unrestricted inspection of all application or device activity.
+
+## Development
+
+Contributions and bug reports are welcome.
+
+```bash
+flutter pub get
+dart format --output=none --set-exit-if-changed lib test example
+flutter analyze
+flutter test
+```
+
+Native changes should also be validated with Android and iOS builds where applicable.
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and [SECURITY.md](SECURITY.md) for reporting security issues.
 
 ## Roadmap
 
-- Add robust Android CPU normalization from per-process CPU time and device core count.
-- Improve per-route request attribution using request-start route context and explicit network event records.
-- Add optional chart exports and report sharing controls.
-- Add iOS process CPU metrics if a reliable, supported implementation is validated.
-- Add real-device integration tests for thermal and network transitions.
+- Improve Android CPU normalization and validation.
+- Improve route attribution for overlapping HTTP requests.
+- Add validated real-device integration tests.
+- Evaluate additional report visualization and export options.
+- Investigate supported approaches to additional platform metrics.
+
+Roadmap items are planned work, not promises that the functionality is already available.
+
+## Author
+
+**Rajat Das**  
+Flutter Developer | Mobile Application Developer
+
+- GitHub: [rajatdas-dev](https://github.com/rajatdas-dev)
+- Repository: [device_diagnostics](https://github.com/rajatdas-dev/device_diagnostics)
+- Issues: [Report a bug or request a feature](https://github.com/rajatdas-dev/device_diagnostics/issues)
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

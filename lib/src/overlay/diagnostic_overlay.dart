@@ -19,8 +19,9 @@ class _DiagnosticOverlayState extends State<DiagnosticOverlay> {
     return AnimatedBuilder(
         animation: c,
         builder: (context, _) {
-          if (!c.config.showFloatingButtonWhenIdle && !c.isRecording)
+          if (!c.config.showFloatingButtonWhenIdle && !c.isRecording) {
             return const SizedBox.shrink();
+          }
           return Positioned(
               left: position.dx,
               top: position.dy,
@@ -98,14 +99,16 @@ class _DiagnosticOverlayState extends State<DiagnosticOverlay> {
                       ? () async {
                           try {
                             final path = await c.stopAndExportPdf();
-                            if (mounted)
+                            if (mounted) {
                               setState(() {
                                 reportPath = path;
                                 reportError = null;
                               });
+                            }
                           } catch (e) {
-                            if (mounted)
+                            if (mounted) {
                               setState(() => reportError = e.toString());
+                            }
                           }
                         }
                       : () {

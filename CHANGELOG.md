@@ -5,6 +5,7 @@ All notable changes to `device_diagnostics` are documented in this file.
 ## [0.0.1] - Initial Release
 
 ### Added
+
 - Initial release of the `device_diagnostics` Flutter package.
 - Diagnostic session management and configurable metric collection.
 - Device and platform metric reporting where supported.
@@ -16,6 +17,7 @@ All notable changes to `device_diagnostics` are documented in this file.
 - Configuration options for diagnostic visibility and sampling behavior.
 
 ### Notes
+
 - Metric availability depends on the operating system and platform implementation.
 - Unsupported metrics may be unavailable.
 - HTTP instrumentation covers only requests routed through `DiagnosticHttpClient`.
