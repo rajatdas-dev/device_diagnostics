@@ -2,6 +2,25 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.0.7]
+
+### Added
+- 📊 Added enhanced PDF performance report summaries with average, minimum, and peak metric statistics.
+- 📈 Improved performance timelines for memory usage, CPU utilization, frame rate, network traffic, and thermal state.
+- 📉 Added minimum metric statistics to provide additional insight into observed performance.
+
+### Changed
+- 🎨 Redesigned the floating diagnostic overlay with a more modern dashboard interface.
+- 🖥️ Improved metric presentation with dedicated cards for memory, CPU, FPS, dropped frames, network type, and thermal state.
+- 🟢 Improved recording status visibility and session controls.
+- 📄 Improved PDF report presentation with a structured summary, device information, performance charts, screen visit details, and measurement limitations.
+- 🌐 Improved network traffic visualization by accumulating available per-sample received and sent byte deltas.
+- 📐 Improved chart axis scaling for clearer performance timelines.
+
+### Fixed
+- 🛠️ Fixed numeric type compatibility in PDF chart axis calculations.
+- 🧹 Removed unused-code warnings by incorporating minimum statistics into the PDF summary.
+
 ## [0.0.6]
 
 ### Fixed
@@ -35,11 +54,11 @@ All notable changes to `device_diagnostics` are documented in this file.
 
 ### Added
 - 📚 Expanded the README with detailed installation and usage instructions.
-- 🎚️ Documented all diagnostic visibility modes: `debug`, `profile`, `release`, `debugAndRelease`, and `all`.
+- 🎙️ Documented all diagnostic visibility modes: `debug`, `profile`, `release`, `debugAndRelease`, and `all`.
 - ⚙️ Added explanations for configuration options and diagnostic session management.
 - 🌐 Improved documentation for HTTP network instrumentation.
 - 📄 Expanded PDF reporting and platform support documentation.
-- 🔒 Added privacy, performance, and troubleshooting guidance.
+- 🔐 Added privacy, performance, and troubleshooting guidance.
 - 🎨 Improved README presentation with emojis, badges, and clearer section organization.
 
 ### Changed
@@ -62,3 +81,5 @@ All notable changes to `device_diagnostics` are documented in this file.
 ### Notes
 - Metric availability depends on the operating system and platform implementation.
 - Unsupported metrics may be unavailable.
+- Network instrumentation observes only traffic covered by the configured instrumentation.
+- Diagnostic measurements may vary depending on platform support, sampling conditions, and application workload.

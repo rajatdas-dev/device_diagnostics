@@ -537,13 +537,15 @@ class DiagnosticPdfReport {
             metricCard(
               'Avg. CPU',
               number(average(cpuValues), suffix: '%'),
-              'Peak ${number(peak(cpuValues), suffix: '%')}',
+              'Min ${number(minimum(cpuValues), suffix: '%')}'
+                  ' • Peak ${number(peak(cpuValues), suffix: '%')}',
               PdfColors.orange,
             ),
             metricCard(
               'Avg. FPS',
               number(average(fpsValues)),
-              'Peak ${number(peak(fpsValues))} FPS',
+              'Min ${number(minimum(fpsValues))} FPS'
+                  ' • Peak ${number(peak(fpsValues))} FPS',
               PdfColors.green,
             ),
           ]),
