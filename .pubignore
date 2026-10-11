@@ -1,0 +1,19 @@
+
+# Generated files and local tooling
+.dart_tool/
+.packages
+.pub/
+build/
+coverage/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# GitHub repository automation
+.github/
+
+# Local package lockfile
+pubspec.lock
