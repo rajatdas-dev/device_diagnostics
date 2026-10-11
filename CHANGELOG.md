@@ -2,6 +2,13 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.0.8]
+
+### Fixed
+- 🐛 Fixed PDF export failure caused by an incompatible combination of `borderRadius` and non-uniform borders in PDF metric cards.
+- 📄 Improved PDF report generation reliability by correcting metric card border decoration.
+- 🎨 Preserved the diagnostic report's visual styling while resolving the PDF rendering assertion.
+
 ## [0.0.7]
 
 ### Added
@@ -19,7 +26,7 @@ All notable changes to `device_diagnostics` are documented in this file.
 
 ### Fixed
 - 🛠️ Fixed numeric type compatibility in PDF chart axis calculations.
-- 🧹 Removed unused-code warnings by incorporating minimum statistics into the PDF summary.
+- 🧹 Incorporated minimum statistics into the PDF summary to eliminate the unused-function warning.
 
 ## [0.0.6]
 

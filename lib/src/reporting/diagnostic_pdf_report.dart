@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -19,13 +18,10 @@ class DiagnosticPdfReport {
     final start = controller.sessionStartedAt;
     final end = controller.sessionEndedAt;
 
-    final duration = start != null && end != null
-        ? end.difference(start)
-        : Duration.zero;
+    final duration =
+        start != null && end != null ? end.difference(start) : Duration.zero;
 
-    final baseline = samples.isNotEmpty
-        ? samples.first.timestamp
-        : start;
+    final baseline = samples.isNotEmpty ? samples.first.timestamp : start;
 
     double? average(Iterable<double?> values) {
       final valid = values.whereType<double>().toList();
@@ -46,7 +42,9 @@ class DiagnosticPdfReport {
     }
 
     String number(double? value, {String suffix = ''}) {
-      return value == null ? 'Unavailable' : '${value.toStringAsFixed(1)}$suffix';
+      return value == null
+          ? 'Unavailable'
+          : '${value.toStringAsFixed(1)}$suffix';
     }
 
     String bytesLabel(double bytes) {
@@ -81,29 +79,29 @@ class DiagnosticPdfReport {
     List<_MetricPoint> metricPoints(double? Function(dynamic) read) {
       return samples
           .map((sample) {
-        final value = read(sample);
-        if (value == null) return null;
-        return _MetricPoint(
-          elapsedSeconds(sample.timestamp),
-          value,
-        );
-      })
+            final value = read(sample);
+            if (value == null) return null;
+            return _MetricPoint(
+              elapsedSeconds(sample.timestamp),
+              value,
+            );
+          })
           .whereType<_MetricPoint>()
           .toList();
     }
 
     final memoryMiB = metricPoints(
-          (sample) => sample.memoryBytes == null
+      (sample) => sample.memoryBytes == null
           ? null
           : sample.memoryBytes! / (1024 * 1024),
     );
 
     final cpuPoints = metricPoints(
-          (sample) => sample.cpuPercent,
+      (sample) => sample.cpuPercent,
     );
 
     final fpsPoints = metricPoints(
-          (sample) => sample.fps,
+      (sample) => sample.fps,
     );
 
     // rxBytes and txBytes are per-sample deltas in this package.
@@ -127,9 +125,7 @@ class DiagnosticPdfReport {
     }
 
     final totalTraffic = rxTotal + txTotal;
-    final networkScale = totalTraffic >= 1024 * 1024
-        ? 1024.0 * 1024.0
-        : 1024.0;
+    final networkScale = totalTraffic >= 1024 * 1024 ? 1024.0 * 1024.0 : 1024.0;
 
     final networkUnit = totalTraffic >= 1024 * 1024 ? 'MiB' : 'KiB';
 
@@ -166,11 +162,11 @@ class DiagnosticPdfReport {
 
     final rxSum = samples.fold<int>(
       0,
-          (sum, sample) => sum + (sample.rxBytes ?? 0),
+      (sum, sample) => sum + (sample.rxBytes ?? 0),
     );
     final txSum = samples.fold<int>(
       0,
-          (sum, sample) => sum + (sample.txBytes ?? 0),
+      (sum, sample) => sum + (sample.txBytes ?? 0),
     );
 
     final memoryValues = samples
@@ -210,12 +206,11 @@ class DiagnosticPdfReport {
     }
 
     pw.Widget metricCard(
-        String label,
-        String value,
-        String detail,
-        PdfColor accent,
-        ) {
-
+      String label,
+      String value,
+      String detail,
+      PdfColor accent,
+    ) {
       return pw.Container(
         decoration: pw.BoxDecoration(
           color: PdfColors.grey100,
@@ -413,7 +408,7 @@ class DiagnosticPdfReport {
                     data: points
                         .map(
                           (point) => pw.PointChartValue(point.x, point.y),
-                    )
+                        )
                         .toList(),
                   ),
                 ],
@@ -517,8 +512,8 @@ class DiagnosticPdfReport {
                 pw.SizedBox(height: 10),
                 pw.Text(
                   '${start?.toLocal().toString().split('.').first ?? 'Start time unavailable'}'
-                      '  —  '
-                      '${end?.toLocal().toString().split('.').first ?? 'End time unavailable'}',
+                  '  —  '
+                  '${end?.toLocal().toString().split('.').first ?? 'End time unavailable'}',
                   style: const pw.TextStyle(
                     fontSize: 9,
                     color: PdfColors.grey300,
@@ -593,13 +588,16 @@ class DiagnosticPdfReport {
             'Metadata supplied by the current platform implementation.',
           ),
 
-          infoLine('Device model', device['model']?.toString() ?? 'Unavailable'),
+          infoLine(
+              'Device model', device['model']?.toString() ?? 'Unavailable'),
           infoLine(
             'Manufacturer',
             device['manufacturer']?.toString() ?? 'Unavailable',
           ),
-          infoLine('Operating system', device['osVersion']?.toString() ?? 'Unavailable'),
-          infoLine('System on chip', device['soc']?.toString() ?? 'Unavailable'),
+          infoLine('Operating system',
+              device['osVersion']?.toString() ?? 'Unavailable'),
+          infoLine(
+              'System on chip', device['soc']?.toString() ?? 'Unavailable'),
           infoLine(
             'Architecture',
             device['architecture']?.toString() ?? 'Unavailable',
@@ -632,7 +630,8 @@ class DiagnosticPdfReport {
 
           chartCard(
             title: 'Frame rate',
-            subtitle: 'Estimated frames per second from collected frame timings.',
+            subtitle:
+                'Estimated frames per second from collected frame timings.',
             points: fpsPoints,
             color: PdfColors.green,
             yAxisLabel: 'Frames per second (FPS)',
@@ -641,22 +640,23 @@ class DiagnosticPdfReport {
           chartCard(
             title: 'Network traffic',
             subtitle:
-            'Cumulative received and sent byte deltas observed during the session. Scale: $networkUnit.',
+                'Cumulative received and sent byte deltas observed during the session. Scale: $networkUnit.',
             points: scaledRx,
             color: PdfColors.cyan,
             yAxisLabel: 'Received ($networkUnit)',
             emptyMessage:
-            'Not enough received-byte samples to draw a timeline. Network counters may be unavailable on this platform.',
+                'Not enough received-byte samples to draw a timeline. Network counters may be unavailable on this platform.',
           ),
 
           chartCard(
             title: 'Network traffic — sent',
-            subtitle: 'Cumulative sent-byte deltas observed during the session.',
+            subtitle:
+                'Cumulative sent-byte deltas observed during the session.',
             points: scaledTx,
             color: PdfColors.purple,
             yAxisLabel: 'Sent ($networkUnit)',
             emptyMessage:
-            'Not enough sent-byte samples to draw a timeline. Network counters may be unavailable on this platform.',
+                'Not enough sent-byte samples to draw a timeline. Network counters may be unavailable on this platform.',
           ),
 
           if (thermalPoints.length >= 2)
@@ -666,7 +666,7 @@ class DiagnosticPdfReport {
                 chartCard(
                   title: 'Thermal state timeline',
                   subtitle:
-                  'Categorical state index over elapsed time; this is not a temperature chart.',
+                      'Categorical state index over elapsed time; this is not a temperature chart.',
                   points: thermalPoints,
                   color: PdfColors.red,
                   yAxisLabel: 'Thermal category index',
@@ -702,12 +702,13 @@ class DiagnosticPdfReport {
           else
             chartCard(
               title: 'Thermal state timeline',
-              subtitle: 'Thermal states are categorical, not temperature readings.',
+              subtitle:
+                  'Thermal states are categorical, not temperature readings.',
               points: thermalPoints,
               color: PdfColors.red,
               yAxisLabel: 'Thermal category index',
               emptyMessage:
-              'Not enough thermal-state samples are available to plot a timeline.',
+                  'Not enough thermal-state samples are available to plot a timeline.',
             ),
 
           sectionTitle(
@@ -725,7 +726,7 @@ class DiagnosticPdfReport {
               ),
               child: pw.Text(
                 'No screen visits were recorded. Add DeviceDiagnostics.routeObserver '
-                    'to MaterialApp.navigatorObservers to enable route tracking.',
+                'to MaterialApp.navigatorObservers to enable route tracking.',
                 style: const pw.TextStyle(fontSize: 9),
               ),
             )
@@ -769,32 +770,32 @@ class DiagnosticPdfReport {
 
           pw.Bullet(
             text:
-            'Unavailable values are omitted from calculations; they are not treated as zero.',
+                'Unavailable values are omitted from calculations; they are not treated as zero.',
             style: const pw.TextStyle(fontSize: 9),
           ),
           pw.Bullet(
             text:
-            'CPU, memory, FPS, and thermal measurements depend on platform support and sampling conditions.',
+                'CPU, memory, FPS, and thermal measurements depend on platform support and sampling conditions.',
             style: const pw.TextStyle(fontSize: 9),
           ),
           pw.Bullet(
             text:
-            'Thermal categories are shown as state indices with a legend. They do not represent degrees or measured temperature.',
+                'Thermal categories are shown as state indices with a legend. They do not represent degrees or measured temperature.',
             style: const pw.TextStyle(fontSize: 9),
           ),
           pw.Bullet(
             text:
-            'Network charts accumulate available per-sample byte deltas. Missing deltas are not independently measurable traffic.',
+                'Network charts accumulate available per-sample byte deltas. Missing deltas are not independently measurable traffic.',
             style: const pw.TextStyle(fontSize: 9),
           ),
           pw.Bullet(
             text:
-            'DiagnosticHttpClient observes only requests made through that client. It does not capture all application or device traffic.',
+                'DiagnosticHttpClient observes only requests made through that client. It does not capture all application or device traffic.',
             style: const pw.TextStyle(fontSize: 9),
           ),
           pw.Bullet(
             text:
-            'Route attribution applies to the package’s recorded route and instrumented traffic; it does not identify traffic from unrelated apps.',
+                'Route attribution applies to the package’s recorded route and instrumented traffic; it does not identify traffic from unrelated apps.',
             style: const pw.TextStyle(fontSize: 9),
           ),
         ],
@@ -843,10 +844,10 @@ double _niceAxisMaximum(double peak) {
   final niceStep = normalized <= 1
       ? 1
       : normalized <= 2
-      ? 2
-      : normalized <= 5
-      ? 5
-      : 10;
+          ? 2
+          : normalized <= 5
+              ? 5
+              : 10;
 
   final step = niceStep * magnitude;
   return ((peak / step).ceil() * step).toDouble();
