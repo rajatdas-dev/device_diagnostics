@@ -215,43 +215,58 @@ class DiagnosticPdfReport {
         String detail,
         PdfColor accent,
         ) {
+
       return pw.Container(
-        padding: const pw.EdgeInsets.all(10),
         decoration: pw.BoxDecoration(
           color: PdfColors.grey100,
-          border: pw.Border(
-            left: pw.BorderSide(color: accent, width: 3),
-          ),
           borderRadius: pw.BorderRadius.circular(5),
         ),
-        child: pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text(
-              label.toUpperCase(),
-              style: const pw.TextStyle(
-                fontSize: 8,
-                color: PdfColors.blueGrey700,
+        child: pw.ClipRRect(
+          horizontalRadius: 5,
+          verticalRadius: 5,
+          child: pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+            children: [
+              pw.Container(
+                width: 3,
+                color: accent,
               ),
-            ),
-            pw.SizedBox(height: 5),
-            pw.Text(
-              value,
-              style: pw.TextStyle(
-                fontSize: 16,
-                fontWeight: pw.FontWeight.bold,
-                color: PdfColors.blueGrey900,
+              pw.Expanded(
+                child: pw.Padding(
+                  padding: const pw.EdgeInsets.all(10),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        label.toUpperCase(),
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.blueGrey700,
+                        ),
+                      ),
+                      pw.SizedBox(height: 5),
+                      pw.Text(
+                        value,
+                        style: pw.TextStyle(
+                          fontSize: 16,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.blueGrey900,
+                        ),
+                      ),
+                      pw.SizedBox(height: 3),
+                      pw.Text(
+                        detail,
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.blueGrey600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            pw.SizedBox(height: 3),
-            pw.Text(
-              detail,
-              style: const pw.TextStyle(
-                fontSize: 8,
-                color: PdfColors.blueGrey600,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
