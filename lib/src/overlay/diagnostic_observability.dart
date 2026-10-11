@@ -82,22 +82,23 @@ class _DiagnosticObservabilityState
       return widget.child;
     }
 
+    final textDirection =
+        Directionality.maybeOf(context) ?? TextDirection.ltr;
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Directionality(
-          textDirection: TextDirection.ltr,
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              widget.child,
-              DiagnosticOverlay(
-                bounds: Size(
-                  constraints.maxWidth,
-                  constraints.maxHeight,
-                ),
+        return Stack(
+          alignment: AlignmentDirectional.topStart,
+          fit: StackFit.expand,
+          children: <Widget>[
+            widget.child,
+            DiagnosticOverlay(
+              bounds: Size(
+                constraints.maxWidth,
+                constraints.maxHeight,
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

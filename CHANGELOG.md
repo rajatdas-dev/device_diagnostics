@@ -2,6 +2,13 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.0.4]
+
+### Fixed
+- 🐛 Fixed the missing `Directionality` issue in the diagnostic overlay when used above `MaterialApp`.
+- 🧭 Added a fallback text direction to ensure the diagnostic overlay can resolve directional alignment when no ancestor provides `Directionality`.
+- 🛠️ Improved diagnostic overlay compatibility with Flutter's inherited widget system.
+
 ## [0.0.3]
 
 ### Fixed
