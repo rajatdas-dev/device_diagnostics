@@ -2,6 +2,13 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.0.9]
+
+### Fixed
+- 🐛 Fixed PDF export failure caused by an infinite-height constraint during PDF report generation.
+- 📄 Improved PDF rendering reliability by resolving layout constraints that could cause height-related rendering errors.
+- 🎨 Preserved the existing diagnostic report layout and visual styling while fixing the PDF export issue.
+
 ## [0.0.8]
 
 ### Fixed
