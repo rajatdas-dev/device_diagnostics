@@ -2,6 +2,14 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.0.5]
+
+### Fixed
+- 🐛 Fixed the `Directionality` assertion triggered by the diagnostic overlay's `Stack` when no ancestor provides text direction.
+- 🧭 Added a fallback text direction to support applications that wrap `MaterialApp` with `DeviceDiagnostics.observability`.
+- 🛠️ Updated stack alignment to use `Alignment.topLeft`, removing the stack's dependency on directional alignment.
+- 🔧 Improved diagnostic overlay compatibility with Flutter's widget hierarchy.
+
 ## [0.0.4]
 
 ### Fixed
@@ -46,5 +54,4 @@ All notable changes to `device_diagnostics` are documented in this file.
 ### Notes
 - Metric availability depends on the operating system and platform implementation.
 - Unsupported metrics may be unavailable.
-- HTTP instrumentation covers only requests routed through `DiagnosticHttpClient`.
-- Diagnostic collection should be enabled explicitly by the integrating application.
+-

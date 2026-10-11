@@ -1,7 +1,7 @@
 
 name: device_diagnostics
 description: A Flutter package for opt-in device diagnostics, performance monitoring, network instrumentation, and PDF diagnostic reports.
-version: 0.0.4
+version: 0.0.5
 
 homepage: https://github.com/rajatdas-dev/device_diagnostics.git
 repository: https://github.com/rajatdas-dev/device_diagnostics.git
