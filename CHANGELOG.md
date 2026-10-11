@@ -2,6 +2,14 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- 🐛 Fixed the `No Overlay widget found` error when the diagnostic overlay is displayed outside the application's `MaterialApp` overlay hierarchy.
+- 🛠️ Improved diagnostic overlay integration by providing an appropriate `Overlay` ancestor for overlay-dependent widgets, including tooltips.
+- 🔧 Improved compatibility with Flutter applications that wrap `MaterialApp` using `DeviceDiagnostics.observability`.
+- ♻️ Improved overlay lifecycle handling to support reliable rendering and updates.
+
 ## [0.0.5]
 
 ### Fixed
@@ -41,17 +49,16 @@ All notable changes to `device_diagnostics` are documented in this file.
 ## [0.0.1] - Initial Release
 
 ### Added
-- Initial release of the `device_diagnostics` Flutter package.
-- Diagnostic session management and configurable metric collection.
-- Device and platform metric reporting where supported.
-- Frame performance monitoring where enabled and supported.
-- Network instrumentation for requests made through `DiagnosticHttpClient`.
-- Screen route visit tracking through the route observer.
-- PDF diagnostic report generation and optional sharing.
-- Diagnostic overlay and observability integration.
-- Configuration options for diagnostic visibility and sampling behavior.
+- 🚀 Initial release of the `device_diagnostics` Flutter package.
+- 📊 Diagnostic session management and configurable metric collection.
+- 📱 Device and platform metric reporting where supported.
+- ⚡ Frame performance monitoring where enabled and supported.
+- 🌐 Network instrumentation for requests made through `DiagnosticHttpClient`.
+- 🧭 Screen route visit tracking through the route observer.
+- 📄 PDF diagnostic report generation and optional sharing.
+- 🛠️ Diagnostic overlay and observability integration.
+- ⚙️ Configuration options for diagnostic visibility and sampling behavior.
 
 ### Notes
 - Metric availability depends on the operating system and platform implementation.
 - Unsupported metrics may be unavailable.
--

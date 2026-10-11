@@ -47,7 +47,6 @@ class _DiagnosticOverlayState extends State<DiagnosticOverlay> {
                     child: expanded
                         ? _panel(c)
                         : IconButton(
-                            tooltip: 'Device diagnostics',
                             onPressed: () => setState(() => expanded = true),
                             icon: Icon(
                                 c.isRecording
