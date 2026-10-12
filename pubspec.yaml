@@ -1,11 +1,10 @@
-
 name: device_diagnostics
 description: A Flutter package for opt-in device diagnostics, performance monitoring, network instrumentation, and PDF diagnostic reports.
-version: 0.0.9
+version: 0.1.0
 
-homepage: https://github.com/rajatdas-dev/device_diagnostics.git
-repository: https://github.com/rajatdas-dev/device_diagnostics.git
-issue_tracker: https://github.com/rajatdas-dev/device_diagnostics.git/issues
+homepage: https://github.com/rajatdas-dev/device_diagnostics
+repository: https://github.com/rajatdas-dev/device_diagnostics
+issue_tracker: https://github.com/rajatdas-dev/device_diagnostics/issues
 
 topics:
   - diagnostics
@@ -15,8 +14,9 @@ topics:
   - debugging
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
-  flutter: '>=3.19.0'
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: '>=3.44.0'
+
 dependencies:
   flutter:
     sdk: flutter
@@ -25,10 +25,12 @@ dependencies:
   path_provider: ^2.1.5
   share_plus: ^10.1.4
   device_info_plus: ^11.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
 flutter:
   plugin:
     platforms:
