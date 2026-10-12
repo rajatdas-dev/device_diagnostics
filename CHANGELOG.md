@@ -2,6 +2,33 @@
 
 All notable changes to `device_diagnostics` are documented in this file.
 
+## [0.1.0]
+
+### Added
+- 🚀 Prepared the package for the `0.1.0` release with updated package metadata and platform configuration.
+- 📱 Improved native diagnostic integration for Android and iOS.
+- 🧪 Improved example-app test configuration to support package validation.
+- 📦 Updated package and example dependency configuration for development and analysis.
+
+### Changed
+- 🛠️ Refined Android Gradle configuration for modern Android and Kotlin tooling compatibility.
+- 🍎 Updated iOS package structure and configuration work toward supporting modern Swift Package Manager integration alongside CocoaPods.
+- 📚 Improved package configuration and release-readiness documentation.
+- 🔍 Continued improving analyzer compatibility and maintainability across the package and example project.
+
+### Fixed
+- 📄 Fixed PDF report generation failures caused by infinite-height constraints.
+- 📐 Improved PDF layout constraint handling to reduce height-related rendering errors.
+- 🎨 Preserved the existing diagnostic report layout and visual styling while addressing PDF export issues.
+- 🧪 Corrected example widget-test references after the example app structure changed.
+- ⚙️ Updated example development dependencies to resolve missing Flutter test and lint package references.
+
+### Notes
+- Native platform metrics remain dependent on operating-system capabilities and platform implementation.
+- Android and iOS platform builds should be validated before release.
+- Swift Package Manager and CocoaPods integration should both be tested before claiming full iOS package-manager compatibility.
+- Package analysis, tests, and `flutter pub publish --dry-run` should pass before publishing the release.
+
 ## [0.0.9]
 
 ### Fixed
@@ -29,7 +56,7 @@ All notable changes to `device_diagnostics` are documented in this file.
 - 🟢 Improved recording status visibility and session controls.
 - 📄 Improved PDF report presentation with a structured summary, device information, performance charts, screen visit details, and measurement limitations.
 - 🌐 Improved network traffic visualization by accumulating available per-sample received and sent byte deltas.
-- 📐 Improved chart axis scaling for clearer performance timelines.
+- 📏 Improved chart axis scaling for clearer performance timelines.
 
 ### Fixed
 - 🛠️ Fixed numeric type compatibility in PDF chart axis calculations.
